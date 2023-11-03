@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Include DataTables CSS and JavaScript -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Form to add a new record (only name) -->
+    <form id="data-form">
+        <input type="text" id="name" placeholder="Name">
+        <button type="button" id="add">Add</button>
+    </form>
+
+    <!-- Display data in a DataTable -->
+    <table id="data-table" class="display">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        $(document).ready(function () {
+            // Initialize the DataTable
+            var dataTable = $('#data-table').DataTable();
+
+            // Counter for generating unique IDs
+            var idCounter = 1;
+
+            // Add a new record to the DataTable
+            $('#add').on('click', function () {
+                var name = $('#name').val();
+
+                if (name) {
+                    // Get the current date in the format "YYYY-MM-DD"
+                    var currentDate = new Date().toISOString().slice(0, 19);
+
+                    // Add the data to the DataTable
+                    dataTable.row.add([
+                        idCounter,
+                        name,
+                        currentDate,
+                        '<button class="edit">Edit</button><button class="delete">Delete</button>'
+                    ]).draw(false);
+
+                    // Increment the ID counter
+                    idCounter++;
+
+                    // Clear the input field
+                    $('#name').val('');
+                }
+            });
+
+            // Delete a record
+            $('#data-table tbody').on('click', '.delete', function () {
+                var row = dataTable.row($(this).parents('tr'));
+                row.remove().draw();
+            });
+
+            // Edit a record
+            $('#data-table tbody').on('click', '.edit', function () {
+                var row = dataTable.row($(this).parents('tr'));
+                var data = row.data();
+                var name = prompt('Edit Name:', data[1]);
+
+                if (name !== null) {
+                    data[1] = name;
+                    row.data(data).draw();
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>
